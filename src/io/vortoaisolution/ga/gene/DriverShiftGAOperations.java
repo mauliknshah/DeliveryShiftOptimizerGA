@@ -5,12 +5,18 @@ import io.vortoaisolution.ga.gene.beans.DeliveryLocation;
 import java.util.Random;
 
 public class DriverShiftGAOperations {
-
-    static void swapMutation(DriverShiftChromosome chromosome){
-        int first = new Random().nextInt(chromosome.size());
+    public static void swapMutation(DriverShiftChromosome chromosome){
+        swapMutation(chromosome,-1);
+    }
+    public static void swapMutation(DriverShiftChromosome chromosome, long seed){
+        Random random = new Random();
+        if (seed != -1){
+            random.setSeed(seed);
+        }
+        int first = random.nextInt(chromosome.size());
         int second = 0;
         do{
-            second = new Random().nextInt(chromosome.size());
+            second = random.nextInt(chromosome.size());
         } while (second == first);
 
         DeliveryLocation temp = chromosome.locations[first];
