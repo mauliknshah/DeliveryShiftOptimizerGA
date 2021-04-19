@@ -5,10 +5,11 @@ import io.vortoaisolution.ga.gene.beans.DeliveryLocation;
 import java.util.Random;
 
 public class DriverShiftGAOperations {
-    public static void swapMutation(DriverShiftChromosome chromosome){
+    public static DriverShiftChromosome swapMutation(DriverShiftChromosome chromosome){
         swapMutation(chromosome,-1);
+        return chromosome;
     }
-    public static void swapMutation(DriverShiftChromosome chromosome, long seed){
+    public static DriverShiftChromosome swapMutation(DriverShiftChromosome chromosome, long seed){
         Random random = new Random();
         if (seed != -1){
             random.setSeed(seed);
@@ -22,6 +23,7 @@ public class DriverShiftGAOperations {
         DeliveryLocation temp = chromosome.locations[first];
         chromosome.locations[first] = chromosome.locations[second];
         chromosome.locations[second] = temp;
+        return chromosome;
     }
     public static DriverShiftChromosome[] randomBreakMutation(DriverShiftChromosome chromosome){
         return randomBreakMutation(chromosome, -1);
@@ -81,11 +83,7 @@ public class DriverShiftGAOperations {
                 count ++;
             }
 
-            if (out.isValid()){
-                return new DriverShiftChromosome[]{out};
-            } else {
-                //Continue generating the single point recombination.
-            }
+            return new DriverShiftChromosome[]{out};
         }
 
         int intersection = random.nextInt(chromosome1.size()+chromosome2.size());
@@ -93,7 +91,6 @@ public class DriverShiftGAOperations {
             intersection = random.nextInt(chromosome1.size()+chromosome2.size());
         }
 
-        System.out.println("Intersection:" + intersection);
         //Initiate the recombined outputs.
         DriverShiftChromosome out1 = new DriverShiftChromosome(intersection+1);
         DriverShiftChromosome out2 = new DriverShiftChromosome(chromosome1.size() + chromosome2.size()-1 - intersection);
@@ -124,11 +121,7 @@ public class DriverShiftGAOperations {
         }
 
         //Return only if the offsprings are valid. Otherwise return null.
-        if (out1.isValid() && out2.isValid()) {
-            return new DriverShiftChromosome[]{out1, out2};
-        } else {
-            return null;
-        }
+        return new DriverShiftChromosome[]{out1, out2};
     }
 
     public static DriverShiftChromosome[] uniformRecombination(DriverShiftChromosome chromosome1,
@@ -173,11 +166,7 @@ public class DriverShiftGAOperations {
         }
 
         //Return only if the offsprings are valid. Otherwise return null.
-        if (out1.isValid() && out2.isValid()) {
-            return new DriverShiftChromosome[]{out1, out2};
-        } else {
-            return null;
-        }
+        return new DriverShiftChromosome[]{out1, out2};
     }
 
 }
