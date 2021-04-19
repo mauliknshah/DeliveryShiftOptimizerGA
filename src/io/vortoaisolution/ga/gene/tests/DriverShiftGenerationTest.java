@@ -45,8 +45,8 @@ class DriverShiftGenerationTest {
 
 
     @Test
-    void testPopulationFitness() {
-        assertEquals(getGeneration().populationFitness(), 1210*2);
+    void testPopulationDistance() {
+        assertEquals(getGeneration().populationDistance(), 40);
     }
 
     @Test
