@@ -23,11 +23,18 @@ public class DriverShiftGAOperations {
         chromosome.locations[first] = chromosome.locations[second];
         chromosome.locations[second] = temp;
     }
+    public static DriverShiftChromosome[] randomBreakMutation(DriverShiftChromosome chromosome){
+        return randomBreakMutation(chromosome, -1);
+    }
 
-    static DriverShiftChromosome[] randomBreakMutation(DriverShiftChromosome chromosome){
-        int breakPoint = new Random().nextInt(chromosome.size());
+    public static DriverShiftChromosome[] randomBreakMutation(DriverShiftChromosome chromosome, long seed){
+        Random random = new Random();
+        if (seed != -1){
+            random.setSeed(seed);
+        }
+        int breakPoint = random.nextInt(chromosome.size());
         while (breakPoint == 0 || breakPoint == chromosome.size()-1){
-            breakPoint = new Random().nextInt(chromosome.size());
+            breakPoint = random.nextInt(chromosome.size());
         }
 
         DriverShiftChromosome out1 = new DriverShiftChromosome(breakPoint+1);
@@ -36,11 +43,13 @@ public class DriverShiftGAOperations {
         int index = 0;
         for (int i=0; i<= breakPoint; i++){
             out1.locations[index] = chromosome.locations[i];
+            index++;
         }
 
         index= 0;
         for (int i=breakPoint+1; i< chromosome.size(); i++){
             out2.locations[index] = chromosome.locations[i];
+            index++;
         }
         return new DriverShiftChromosome[]{out1, out2};
     }
