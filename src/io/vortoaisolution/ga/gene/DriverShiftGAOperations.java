@@ -54,13 +54,22 @@ public class DriverShiftGAOperations {
         return new DriverShiftChromosome[]{out1, out2};
     }
 
+    public static DriverShiftChromosome[] simpleRandomPointRecombination(DriverShiftChromosome chromosome1,
+                                                                         DriverShiftChromosome chromosome2){
+        return simpleRandomPointRecombination(chromosome1, chromosome2, -1);
+    }
 
-    static DriverShiftChromosome[] simpleRandomPointRecombination(DriverShiftChromosome chromosome1, DriverShiftChromosome chromosome2){
+    public static DriverShiftChromosome[] simpleRandomPointRecombination(DriverShiftChromosome chromosome1,
+                                                                         DriverShiftChromosome chromosome2, long seed){
         double SINGLE_OUTPUT_PROBABILITY = 0.5;
-        double singleOutput = new Random().nextDouble();
+        Random random = new Random();
+        if (seed != -1){
+            random.setSeed(seed);
+        }
+        double singleOutput = random.nextDouble();
 
         //Generate single output with 50% probability.
-        if ((singleOutput<= SINGLE_OUTPUT_PROBABILITY) && (chromosome1.fitness() + chromosome2.fitness() <= chromosome1.MAX_DISTANCE)){
+        if (singleOutput<= SINGLE_OUTPUT_PROBABILITY){
             DriverShiftChromosome out = new DriverShiftChromosome(chromosome1.size() + chromosome2.size());
             int count = 0;
             for(DeliveryLocation location: chromosome1.locations){
@@ -72,46 +81,58 @@ public class DriverShiftGAOperations {
                 count ++;
             }
 
-            return new DriverShiftChromosome[]{out};
-        } else {
-            int intersection = new Random().nextInt(chromosome1.size()+chromosome2.size());
-            while ( intersection == 0 || intersection == (chromosome1.size() + chromosome2.size()-1)){
-                intersection = new Random().nextInt(chromosome1.size()+chromosome2.size());
-            }
-
-            //Initiate the recombined outputs.
-            DriverShiftChromosome out1 = new DriverShiftChromosome(intersection+1);
-            DriverShiftChromosome out2 = new DriverShiftChromosome(chromosome1.size() + chromosome2.size()-1 - intersection);
-
-            int count = 0;
-            for (DeliveryLocation location: chromosome1.locations){
-                if (count <= intersection){
-                    out1.locations[count] = location;
-                } else {
-                    out2.locations[count] = location;
-                }
-                count++;
-            }
-
-            for (DeliveryLocation location: chromosome2.locations){
-                if (count <= intersection){
-                    out1.locations[count] = location;
-                } else {
-                    out2.locations[count] = location;
-                }
-                count++;
-            }
-
-            //Return only if the offsprings are valid. Otherwise return null.
-            if (out1.isValid() && out2.isValid()) {
-                return new DriverShiftChromosome[]{out1, out2};
+            if (out.isValid()){
+                return new DriverShiftChromosome[]{out};
             } else {
-                return null;
+                //Continue generating the single point recombination.
             }
+        }
+
+        int intersection = random.nextInt(chromosome1.size()+chromosome2.size());
+        while ( intersection == 0 || intersection == chromosome1.size()-1 || intersection == (chromosome1.size() + chromosome2.size()-1)){
+            intersection = random.nextInt(chromosome1.size()+chromosome2.size());
+        }
+
+        System.out.println("Intersection:" + intersection);
+        //Initiate the recombined outputs.
+        DriverShiftChromosome out1 = new DriverShiftChromosome(intersection+1);
+        DriverShiftChromosome out2 = new DriverShiftChromosome(chromosome1.size() + chromosome2.size()-1 - intersection);
+
+        int count = 0;
+        int count1 = 0;
+        int count2 = 0;
+        for (DeliveryLocation location: chromosome1.locations){
+            if (count <= intersection){
+                out1.locations[count1] = location;
+                count1++;
+            } else {
+                out2.locations[count2] = location;
+                count2++;
+            }
+            count++;
+        }
+
+        for (DeliveryLocation location: chromosome2.locations){
+            if (count <= intersection){
+                out1.locations[count1] = location;
+                count1++;
+            } else {
+                out2.locations[count2] = location;
+                count2++;
+            }
+            count++;
+        }
+
+        //Return only if the offsprings are valid. Otherwise return null.
+        if (out1.isValid() && out2.isValid()) {
+            return new DriverShiftChromosome[]{out1, out2};
+        } else {
+            return null;
         }
     }
 
-    static DriverShiftChromosome[] uniformRecombination(DriverShiftChromosome chromosome1, DriverShiftChromosome chromosome2){
+    public static DriverShiftChromosome[] uniformRecombination(DriverShiftChromosome chromosome1,
+                                                               DriverShiftChromosome chromosome2){
         //Decide the size.
         int size1 = (int)((chromosome1.size() + chromosome2.size())/2);
         int size2 = 0;
@@ -127,20 +148,26 @@ public class DriverShiftGAOperations {
         DriverShiftChromosome out2 = new DriverShiftChromosome(size2);
 
         int count = 0;
+        int count1 = 0;
+        int count2  = 0;
         for (DeliveryLocation location: chromosome1.locations){
             if (count%2 == 0){
-                out1.locations[(int)count/2] = location;
+                out1.locations[count1] = location;
+                count1++;
             } else {
-                out2.locations[(int)(count/2) + 1] = location;
+                out2.locations[count2] = location;
+                count2++;
             }
             count++;
         }
 
         for (DeliveryLocation location: chromosome2.locations){
             if (count%2 == 0){
-                out1.locations[(int)count/2] = location;
+                out1.locations[count1] = location;
+                count1++;
             } else {
-                out2.locations[(int)(count/2) + 1] = location;
+                out2.locations[count2] = location;
+                count2++;
             }
             count++;
         }
