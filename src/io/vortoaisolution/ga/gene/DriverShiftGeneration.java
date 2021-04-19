@@ -37,12 +37,12 @@ public class DriverShiftGeneration {
         return this.driverShifts.get(index);
     }
 
-    public double populationFitness() {
-        double fitness = 0;
+    public double populationDistance() {
+        double distance = 0;
         for(int i=0; i < this.driverShifts.size(); i++){
-            fitness += driverShifts.get(i).fitness();
+            distance += driverShifts.get(i).shiftDistance();
         }
-        return fitness;
+        return distance;
     }
 
     public boolean isValid(DeliveryMap map) {
