@@ -20,8 +20,9 @@ public class DriverShiftChromosome implements ChromosomeInterface {
     public double fitness() {
         double fitness = 0;
         double distance = 0;
-        for(int i = 1; i < this.locations.length; i++){
-            double currentDistance = DeliveryLocation.distanceBetweenTwoPoints(this.locations[i], this.locations[i-1]);
+        for(int i = 0; i < this.locations.length; i++){
+            double currentDistance = DeliveryLocation.distanceBetweenTwoPoints(this.locations[i],
+                    (i == 0? new DeliveryLocation(0,0,0) : this.locations[i-1]));
             if (currentDistance == -1) {
                 return -1;
             } else {
@@ -29,7 +30,7 @@ public class DriverShiftChromosome implements ChromosomeInterface {
             }
         }
         //Returning distance.
-        distance += DeliveryLocation.distanceBetweenTwoPoints(this.locations[0], this.locations[this.locations.length-1]);
+        distance += DeliveryLocation.distanceBetweenTwoPoints(new DeliveryLocation(0,0,0), this.locations[this.locations.length-1]);
 
         //Fitness function.
         //Punishes less distance travelled in the shift.
@@ -50,6 +51,16 @@ public class DriverShiftChromosome implements ChromosomeInterface {
     }
 
     public boolean isValid(){
-        return this.fitness() < this.MAX_DISTANCE;
+        for(DeliveryLocation location: this.locations){
+            if (location == null) {
+                return false;
+            }
+        }
+
+        if (this.fitness() < this.MAX_DISTANCE) {
+            return false;
+        }
+
+        return true;
     }
 }
