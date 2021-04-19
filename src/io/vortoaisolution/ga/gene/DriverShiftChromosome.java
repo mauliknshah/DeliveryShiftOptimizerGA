@@ -19,6 +19,20 @@ public class DriverShiftChromosome implements ChromosomeInterface {
     @Override
     public double fitness() {
         double fitness = 0;
+        double distance = shiftDistance();
+        //Fitness function.
+        //Punishes less distance travelled in the shift.
+        //Punishes for having a shift.
+        //Reduces fitness value for doing more locations.
+        fitness = (distance/this.locations.length) + (MAX_DISTANCE-distance) + SHIFT_PENALTY;
+        if (isValid()){
+            fitness -= SHIFT_PENALTY;
+        }
+
+        return fitness;
+    }
+
+    public double shiftDistance() {
         double distance = 0;
         for(int i = 0; i < this.locations.length; i++){
             double currentDistance = DeliveryLocation.distanceBetweenTwoPoints(this.locations[i],
@@ -26,19 +40,12 @@ public class DriverShiftChromosome implements ChromosomeInterface {
             if (currentDistance == -1) {
                 return -1;
             } else {
-                distance += currentDistance;
+                distance += currentDistance + 15;
             }
         }
         //Returning distance.
         distance += DeliveryLocation.distanceBetweenTwoPoints(new DeliveryLocation(0,0,0), this.locations[this.locations.length-1]);
-
-        //Fitness function.
-        //Punishes less distance travelled in the shift.
-        //Punishes for having a shift.
-        //Reduces fitness value for doing more locations.
-        fitness = (distance/this.locations.length) + (MAX_DISTANCE-distance) + SHIFT_PENALTY;
-
-        return fitness;
+        return distance;
     }
 
     @Override
@@ -57,7 +64,7 @@ public class DriverShiftChromosome implements ChromosomeInterface {
             }
         }
 
-        if (this.fitness() < this.MAX_DISTANCE) {
+        if (this.shiftDistance() > this.MAX_DISTANCE) {
             return false;
         }
 
