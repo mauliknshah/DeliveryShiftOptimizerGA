@@ -5,6 +5,8 @@ import io.vortoaisolution.ga.gene.interfaces.ChromosomeInterface;
 
 public class DriverShiftChromosome implements ChromosomeInterface {
     public DeliveryLocation[] locations;
+    public final double MAX_DISTANCE = 60*12;
+    public final double SHIFT_PENALTY = 500;
 
     public DriverShiftChromosome(int size) {
         this.locations = new DeliveryLocation[size];
@@ -16,6 +18,7 @@ public class DriverShiftChromosome implements ChromosomeInterface {
 
     @Override
     public double fitness() {
+        double fitness = 0;
         double distance = 0;
         for(int i = 1; i < this.locations.length; i++){
             double currentDistance = DeliveryLocation.distanceBetweenTwoPoints(this.locations[i], this.locations[i-1]);
@@ -27,11 +30,26 @@ public class DriverShiftChromosome implements ChromosomeInterface {
         }
         //Returning distance.
         distance += DeliveryLocation.distanceBetweenTwoPoints(this.locations[0], this.locations[this.locations.length-1]);
-        return distance;
+
+        //Fitness function.
+        //Punishes less distance travelled in the shift.
+        //Punishes for having a shift.
+        //Reduces fitness value for doing more locations.
+        fitness = (distance/this.locations.length) + (MAX_DISTANCE-distance) + SHIFT_PENALTY;
+
+        return fitness;
     }
 
     @Override
     public void clean() {
         this.locations = new DeliveryLocation[this.locations.length];
+    }
+
+    public int size(){
+        return this.locations.length;
+    }
+
+    public boolean isValid(){
+        return this.fitness() < this.MAX_DISTANCE;
     }
 }
