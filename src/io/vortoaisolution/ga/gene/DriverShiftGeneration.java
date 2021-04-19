@@ -8,6 +8,10 @@ import java.util.ArrayList;
 public class DriverShiftGeneration {
     public ArrayList<DriverShiftChromosome> driverShifts;
 
+    public DriverShiftGeneration() {
+        this.driverShifts = new ArrayList<DriverShiftChromosome>();
+    }
+
     public DriverShiftGeneration(ArrayList<DriverShiftChromosome> driverShifts) {
         this.driverShifts = driverShifts;
     }
@@ -43,31 +47,38 @@ public class DriverShiftGeneration {
 
     public boolean isValid(DeliveryMap map) {
         boolean[] validity = new boolean[map.size()];
+        int count = 0;
         for(DriverShiftChromosome driverShiftChromosome: this.driverShifts){
             for(DeliveryLocation location: driverShiftChromosome.locations){
-                if (validity[location.getLocID()]) {
+                if (location.getLocID() < map.size() && validity[location.getLocID()-1]) {
                     return false;
                 } else {
-                    validity[location.getLocID()] = true;
+                    validity[location.getLocID()-1] = true;
                 }
+                count += 1;
             }
         }
-        return true;
+
+        if (count != map.size()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
-    public DeliveryLocation[] listInvalid(DeliveryMap map) {
-        ArrayList<DeliveryLocation> invlaidLocations = new ArrayList<DeliveryLocation>();
+    public ArrayList<Integer> listDuplicates(DeliveryMap map) {
+        ArrayList<Integer> invlaidLocations = new ArrayList<Integer>();
         boolean[] validity = new boolean[map.size()];
         for(DriverShiftChromosome driverShiftChromosome: this.driverShifts){
             for(DeliveryLocation location: driverShiftChromosome.locations){
-                if (validity[location.getLocID()]) {
-                    invlaidLocations.add(location);
+                if (validity[location.getLocID()-1]) {
+                    invlaidLocations.add(location.getLocID());
                 } else {
-                    validity[location.getLocID()] = true;
+                    validity[location.getLocID()-1] = true;
                 }
             }
         }
-        return (DeliveryLocation[]) invlaidLocations.toArray();
+        return invlaidLocations;
     }
 
 
