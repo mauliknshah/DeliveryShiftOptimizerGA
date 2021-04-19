@@ -1,15 +1,15 @@
 package io.vortoaisolution.ga.gene.beans;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 
 public class DeliveryMap {
-    public HashMap<Integer, DeliveryLocation> map;
+    public TreeMap<Integer, DeliveryLocation> map;
 
     public DeliveryMap() {
-        this.map = new HashMap<Integer, DeliveryLocation>();
+        this.map = new TreeMap<Integer, DeliveryLocation>();
     }
 
-    public DeliveryMap(HashMap<Integer, DeliveryLocation> map) {
+    public DeliveryMap(TreeMap<Integer, DeliveryLocation> map) {
         this.map = map;
     }
 
@@ -19,6 +19,10 @@ public class DeliveryMap {
         } else {
             return -1;
         }
+    }
+
+    public int size(){
+        return this.map.size();
     }
 
 }
